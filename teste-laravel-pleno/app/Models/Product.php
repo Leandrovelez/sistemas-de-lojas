@@ -5,15 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Store extends Model
+class Product extends Model
 {
     use HasFactory;
-
+    
     /**
-     * Get the products for the store.
+     * Get the store that owns the product.
      */
-    public function products()
+    public function store()
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsTo(Store::class);
     }
+  
+
 }
