@@ -18,6 +18,10 @@ class ProductController extends Controller
     public function index()
     {
         $product = Product::all();
+        
+        $product->each(function ($item, $key){
+            $item->value = $this->currencyMask($item->value);
+        });
 
         return response()->json($product);
     }
@@ -48,6 +52,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::find($id);
+        $product->value = $this->currencyMask($product->value);
 
         return response()->json($product);
     }
@@ -83,5 +88,10 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json($product);
+    }
+
+    public function currencyMask($value) {
+        $value_formated = "R$ " . number_format($value, 2, ",", ".");
+        return $value_formated;
     }
 }
