@@ -7,9 +7,21 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Requests\Product\CreateProductRequest;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\Success;
+use App\Interfaces\Product\ProductRepositoryInterface;
+use App\Interfaces\Product\StoreRepositoryInterface;
 
 class ProductController extends Controller
 {
+    private $productRepository;
+    
+    // ProductRepositoryInterface is the interface
+    public function __construct(ProductRepositoryInterface $productRepositoryInterface)
+    {
+        $this->productRepository = $productRepositoryInterface;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,12 +29,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::all();
-        
-        $product->each(function ($item, $key){
-            $item->value = $this->currencyMask($item->value);
-        });
-
+        $product = $this->productRepository->getAllProducts();
         return response()->json($product);
     }
 
@@ -34,12 +41,7 @@ class ProductController extends Controller
      */
     public function store(CreateProductRequest $request)
     {
-        $product = new Product;
-        $product->name = $request->name;
-        $product->value = $request->value;
-        $product->store_id = $request->store_id;
-        $product->save();
-
+        $product = $this->productRepository->createProduct($request);
         return response()->json($product);
     }
 
@@ -51,9 +53,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $product = Product::find($id);
-        $product->value = $this->currencyMask($product->value);
-
+        $product = $this->productRepository->getProductById($id);
         return response()->json($product);
     }
 
@@ -66,13 +66,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, $id)
     {
-        $product = Product::find($id);
-        $product->name = $request->name;
-        $product->value = $request->value;
-        $product->store_id = $request->store_id;
-        $product->is_active = $request->is_active;
-        $product->save();
-
+        $product = $this->productRepository->updateProduct($id, $request);
         return response()->json($product);
     }
 
@@ -84,9 +78,7 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        $product = Product::find($id);
-        $product->delete();
-
+        $product = $this->productRepository->deleteProduct($id);
         return response()->json($product);
     }
 

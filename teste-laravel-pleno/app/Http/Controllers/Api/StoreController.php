@@ -7,9 +7,18 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Store\CreateStoreRequest;
 use App\Http\Requests\Store\UpdateStoreRequest;
 use App\Models\Store;
+use App\Interfaces\Store\StoreRepositoryInterface;
 
 class StoreController extends Controller
 {
+    private $storeRepository;
+    
+    // StoreRepositoryInterface is the interface
+    public function __construct(StoreRepositoryInterface $storeRepositoryInterface)
+    {
+        $this->storeRepository = $storeRepositoryInterface;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +26,8 @@ class StoreController extends Controller
      */
     public function index()
     {
-        return response()->json(Store::all());
+        $stores = $this->storeRepository->getAllStores();
+        return response()->json($stores);
     }
 
     /**
@@ -28,10 +38,7 @@ class StoreController extends Controller
      */
     public function store(CreateStoreRequest $request)
     {
-        $store = new Store;
-        $store->name = $request->name;
-        $store->email = $request->email;
-        $store->save();
+        $store = $this->storeRepository->createStore($request);
 
         return response()->json($store);
     }
@@ -44,8 +51,7 @@ class StoreController extends Controller
      */
     public function show($id)
     {
-        $store = Store::with('products')->find($id);
-        
+        $store = $this->storeRepository->getStoreByid($id);
         return response()->json($store);
     }
 
@@ -58,11 +64,7 @@ class StoreController extends Controller
      */
     public function update(UpdateStoreRequest $request, $id)
     {
-        $store = Store::find($id);
-        $store->name = $request->name;
-        $store->email = $request->email;
-        $store->save();
-
+        $store = $this->storeRepository->updateStore($id, $request);
         return response()->json($store);
     }
 
@@ -74,9 +76,7 @@ class StoreController extends Controller
      */
     public function destroy($id)
     {
-        $store = Store::find($id);
-        $store->delete();
-
+        $store = $this->storeRepository->deleteStore($id);
         return response()->json($store);
     }
 }

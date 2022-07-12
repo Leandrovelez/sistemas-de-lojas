@@ -25,7 +25,7 @@ class UpdateProductRequest extends FormRequest
     {
         return [
             'name' => 'string|min:3|max:60',
-            'value' => 'integer|min:2|max:6',
+            'value' => 'integer|digits_between:2,6',
             'store_id' => 'integer|exists:stores,id',
             'is_active' => 'boolean'
         ];
@@ -43,11 +43,10 @@ class UpdateProductRequest extends FormRequest
             'name.min' => 'O nome deve conter no mínimo :min letras',
             'name.max' => 'O nome deve conter no máximo :max letras',
             'value.integer' => 'O valor deve um número',
-            'value.min' => 'O valor deve conter no mínimo :min dígitos',
-            'value.max' => 'O valor deve conter no máximo :max dígitos',
+            'value.digits_between' => 'O valor deve conter entre 2 e 6 dígitos',
             'store_id.integer' => 'O id deve um número',
             'is_active.boolean' => 'O status de ativo deve ser verdadeiro ou falso',
-            'store.exists' => 'Não foi encontrada uma loja com esse id'
+            'store_id.exists' => 'Não foi encontrada uma loja com esse id'
         ];
     }
 }

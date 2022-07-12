@@ -25,7 +25,7 @@ class CreateProductRequest extends FormRequest
     {
         return [
             'name' => 'string|min:3|max:60',
-            'value' => 'string|min:2|max:6',
+            'value' => 'integer|digits_between:2,6',
             'store_id' => 'integer|exists:stores,id'
         ];
     }
@@ -41,11 +41,9 @@ class CreateProductRequest extends FormRequest
             'name.string' => 'O nome deve ser um texto',
             'name.min' => 'O nome deve conter no mínimo :min letras',
             'name.max' => 'O nome deve conter no máximo :max letras',
-            //'value.string' => 'O valor deve um número',
-            'value.min' => 'O valor deve conter no mínimo :min dígitos',
-            'value.max' => 'O valor deve conter no máximo :max dígitos',
+            'value.digits_between' => 'O valor deve conter 2 e 6 dígitos',
             'store_id.integer' => 'O id deve um número',
-            'store.exists' => 'Não foi encontrada uma loja com esse id'
+            'store_id.exists' => 'Não foi encontrada uma loja com esse id'
         ];
     }
 }
