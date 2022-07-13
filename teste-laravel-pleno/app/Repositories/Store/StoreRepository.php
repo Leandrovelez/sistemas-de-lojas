@@ -40,9 +40,7 @@ class StoreRepository implements StoreRepositoryInterface{
      */
     public function getStoreById($id)
     {
-        $store = Store::with('products')->find($id);
-        
-        return $store;
+        return Store::with('products')->find($id);
     }
 
     /**

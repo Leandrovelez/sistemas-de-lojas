@@ -14,9 +14,7 @@ class ProductRepository implements ProductRepositoryInterface {
      */
     public function getAllProducts()
     {
-        $product = Product::all();
-
-        return $product;
+        return Product::all();
     }
 
     /**
@@ -31,15 +29,9 @@ class ProductRepository implements ProductRepositoryInterface {
         $product->name = $request->name;
         $product->value = $request->value;
         $product->store_id = $request->store_id;
-        dd($request->all());
         $product->save();
 
-        $email = Notification::send($product, new Success($product));
-        $product->notify(new Success($product));
-        //dd($product);
         return $product;
-        //dd('Esperando fazer o email funcionar');
-        //return response()->json($product);
     }
 
     /**
@@ -50,9 +42,7 @@ class ProductRepository implements ProductRepositoryInterface {
      */
     public function getProductById($id)
     {
-        $product = Product::find($id);
-        
-        return $product;
+        return Product::find($id);
     }
 
     /**
@@ -69,7 +59,7 @@ class ProductRepository implements ProductRepositoryInterface {
         $product->value = $request->value;
         $product->store_id = $request->store_id;
         $product->is_active = $request->is_active;
-        $product->save();
+        $product->save();        
 
         return $product;
     }

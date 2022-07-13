@@ -5,21 +5,26 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Store;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Requests\Product\CreateProductRequest;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\Success;
 use App\Interfaces\Product\ProductRepositoryInterface;
-use App\Interfaces\Product\StoreRepositoryInterface;
+use App\Interfaces\Store\StoreRepositoryInterface;
+use App\Mail\ProductSave;
+use Illuminate\Support\Facades\Mail;
 
 class ProductController extends Controller
 {
     private $productRepository;
+    private $storeRepository;
     
     // ProductRepositoryInterface is the interface
-    public function __construct(ProductRepositoryInterface $productRepositoryInterface)
+    public function __construct(ProductRepositoryInterface $productRepositoryInterface, StoreRepositoryInterface $storeRepositoryInterface)
     {
         $this->productRepository = $productRepositoryInterface;
+        $this->storeRepository = $storeRepositoryInterface;
     }
 
     /**
@@ -42,6 +47,10 @@ class ProductController extends Controller
     public function store(CreateProductRequest $request)
     {
         $product = $this->productRepository->createProduct($request);
+        
+        if($product){
+            $this->mailSuccess($product, "salvo");
+        };
         return response()->json($product);
     }
 
@@ -67,6 +76,9 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, $id)
     {
         $product = $this->productRepository->updateProduct($id, $request);
+        if($product){
+            $this->mailSuccess($product, "editado");
+        }
         return response()->json($product);
     }
 
@@ -82,8 +94,8 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    public function currencyMask($value) {
-        $value_formated = "R$ " . number_format($value, 2, ",", ".");
-        return $value_formated;
+    public function mailSuccess($product, $action) {
+        $store = $this->storeRepository->getStoreById($product->store_id);
+        Mail::to($store->email)->send(new ProductSave($store->name, $product, $action));
     }
 }
