@@ -1,5 +1,5 @@
-# teste-laravel-pleno
-Teste para a vaga de programador Laravel pleno
+# Sistema de lojas
+
 
 Esse projeto cria uma API REST para um sistemas de lojas, com o CRUD para as lojas e outro CRUD para os produtos.
 
